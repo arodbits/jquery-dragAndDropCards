@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>jQuery UI Draggable - Default functionality</title>
+	<link href="style.css" type="text/css" rel="stylesheet">
+	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+
+	<style>
+		#content{ width: 150px; height: 150px; padding: 0.5em; background-color: blue }
+		#container {}
+
+	</style>
+	<script>
+		$(function() {
+
+			init();
+
+			function init(){
+
+				$("#cardPile").html('');
+				$("#cardSlots").html('');
+
+				var count = 0;
+
+				var cards = ["1","2","3","4","5","6","7","8","9"];
+
+				var sortedCard = cards.sort(function(){return Math.random()-.5;});
+
+				for(card in sortedCard){
+					$("<div>"+sortedCard[card]+"</div>").data('card',sortedCard[card]).attr('id', 'card'+sortedCard[card]).appendTo('#cardPile').draggable({
+						stack : '#cardPile div',
+						cursor : 'move',
+						revert : true
+					});
+				}
+
+				var cardNames = [{number:1, value:"one"},{number:2, value:"two"},{number:3, value:"three"},{number:4, value:"four"},{number:5, value:"five"},{number:6, value:"six"},{number:7, value:"seven"},{number:8, value:"eight"},{number:9, value:"nine"}];
+
+				var sortedValues = cardNames.sort(function(){return Math.random()-.5;});
+
+				for(card in sortedValues){
+					$('<div>'+sortedValues[card].value+'</div>').data('card',sortedValues[card].number).appendTo('#cardSlots').droppable({
+						accept : "#cardPile div",
+						hoverClass: 'hovered',
+						drop : handleCardDrop
+					});
+				}
+
+				function handleCardDrop (ev, ui){
+					var draggableCardNumber = ui.draggable.data('card');
+					var droppableCardNumber = $(this).data('card');
+					if(draggableCardNumber==droppableCardNumber){
+						ui.draggable.draggable( 'disable' );
+						ui.draggable.draggable( 'option', 'revert', false );
+						ui.draggable.position({of:$(this), my : 'left top', at:'left top'});
+						ui.draggable.addClass('correct');
+						count++;
+					}
+					if(count==9){
+						var r = alert('you win!');
+						init();
+					}
+				}
+			}
+
+		});
+</script>
+</head>
+<body>
+	<div id="container">
+		<h1>PLAYGROUND! DEVELOPED BY ANTHONY RODRIGUEZ. </h1>
+		<h3>Move the cards into the correct slot</h3>
+		<div id="cardPile"></div>
+		<div id="cardSlots"></div>
+</div>
+
+</div>
+</body>
+</html>
